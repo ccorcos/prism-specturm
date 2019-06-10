@@ -15,11 +15,11 @@ const whiteIntersection: Point = { x: viewport * 0.5, y: viewport * 0.5 }
 
 // Refraction index of glass.
 // https://www.sciencelearn.org.nz/resources/49-refraction-of-light
-const refractionRed = 1.513
-const refractionViolet = 1.532
+const redRefraction = 1.513
+const violetRefraction = 1.532
 
 export function App() {
-	const [incidentAngleDegrees, setIncidentAngleDegrees] = React.useState(10)
+	const [incidentAngleDegrees, setIncidentAngleDegrees] = React.useState(45)
 	const incidentAngle = radians(incidentAngleDegrees)
 
 	const [prismAngleDegrees, setPrismAngleDegrees] = React.useState(60)
@@ -45,9 +45,9 @@ export function App() {
 		},
 	]
 
-	const redAngleInside = Math.asin(Math.sin(incidentAngle) / refractionRed)
+	const redAngleInside = Math.asin(Math.sin(incidentAngle) / redRefraction)
 	const violetAngleInside = Math.asin(
-		Math.sin(incidentAngle) / refractionViolet
+		Math.sin(incidentAngle) / violetRefraction
 	)
 
 	const endAngle = Math.PI - Math.PI / 2 - prismAngle
@@ -78,6 +78,14 @@ export function App() {
 			whiteIntersection.y -
 			Math.cos(incidentAngle - violetAngleInside) * violetLenghtInside,
 	}
+
+	const redIncidentAngle = prismAngle - redAngleInside
+	const violetIncidentAngle = prismAngle - violetAngleInside
+
+	const redAngleOutside = Math.asin(redRefraction * Math.sin(redIncidentAngle))
+	const violetAngleOutside = Math.asin(
+		violetRefraction * Math.sin(violetIncidentAngle)
+	)
 
 	return (
 		<div>
@@ -135,6 +143,62 @@ export function App() {
 					y1={whiteIntersection.y}
 					x2={violetIntersection.x}
 					y2={violetIntersection.y}
+					style={{ stroke: "rgba(65,0,255,0.4)", strokeWidth: 1 }}
+				/>
+
+				<line
+					x1={redIntersection.x}
+					y1={redIntersection.y}
+					x2={
+						redIntersection.x +
+						Math.cos(
+							incidentAngle -
+								redAngleInside -
+								redIncidentAngle -
+								Math.PI / 2 +
+								redAngleOutside
+						) *
+							200
+					}
+					y2={
+						redIntersection.y +
+						Math.sin(
+							incidentAngle -
+								redAngleInside -
+								redIncidentAngle -
+								Math.PI / 2 +
+								redAngleOutside
+						) *
+							200
+					}
+					style={{ stroke: "rgba(255,0,0,0.4)", strokeWidth: 1 }}
+				/>
+
+				<line
+					x1={violetIntersection.x}
+					y1={violetIntersection.y}
+					x2={
+						violetIntersection.x +
+						Math.cos(
+							incidentAngle -
+								violetAngleInside -
+								violetIncidentAngle -
+								Math.PI / 2 +
+								violetAngleOutside
+						) *
+							200
+					}
+					y2={
+						violetIntersection.y +
+						Math.sin(
+							incidentAngle -
+								violetAngleInside -
+								violetIncidentAngle -
+								Math.PI / 2 +
+								violetAngleOutside
+						) *
+							200
+					}
 					style={{ stroke: "rgba(65,0,255,0.4)", strokeWidth: 1 }}
 				/>
 			</svg>
